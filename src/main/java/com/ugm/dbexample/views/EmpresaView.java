@@ -10,7 +10,6 @@ import com.ugm.dbexample.utilities.TableButtonUtils;
 import com.ugm.dbexample.utilities.TableButtonUtils.TableButtonAction;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.table.TableCellRenderer;
 
 public class EmpresaView extends JPanel {
     private final IEmpresaService empresaService;
@@ -57,8 +56,8 @@ public class EmpresaView extends JPanel {
         
         buttonActions = new HashMap<>();
         // Configurar renderer y editor para las columnas de botones
-        configurarColumnaBotones("Departamentos", 2);
-        configurarColumnaBotones("Empleados", 3);
+        configurarColumnaBotones("Departamentos");
+        configurarColumnaBotones("Empleados");
 
         // Agregar componentes al panel
         add(panelFormulario, BorderLayout.NORTH);
@@ -170,7 +169,7 @@ public class EmpresaView extends JPanel {
         this.onHomeAction = action;
     }
     
-    private void configurarColumnaBotones(String columnName, int columnIndex) {
+    private void configurarColumnaBotones(String columnName) {
         tablaEmpresas.getColumn(columnName).setCellRenderer(new TableButtonUtils.GenericButtonRenderer());
         tablaEmpresas.getColumn(columnName).setCellEditor(
             new TableButtonUtils.GenericButtonEditor((id, action) -> {
