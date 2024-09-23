@@ -13,4 +13,6 @@ public interface IEmpleado {
     List<Empleado> findEmpleadoEntities(int maxResults, int firstResult);
     int getEmpleadoCount();
     List<Empleado> getEmpleadosByEmpresaId(Integer id);
+    List<Empleado> getEmpleadosByDepartamentoId(Integer id);
+
 }

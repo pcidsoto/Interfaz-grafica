@@ -69,10 +69,8 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     }
 
     @Override
-    public List<Empleado> obtenerEmpleadosPorDepartamento(Departamento departamento) {
-        return obtenerTodosLosEmpleados().stream()
-                .filter(e -> e.getDepartamento().equals(departamento))
-                .collect(Collectors.toList());
+    public List<Empleado> obtenerEmpleadosPorDepartamento(Integer departamentoId) {
+        return empleadoRepository.getEmpleadosByDepartamentoId(departamentoId);
     }
 
     @Override

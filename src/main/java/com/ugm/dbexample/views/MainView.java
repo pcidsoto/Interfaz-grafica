@@ -49,20 +49,38 @@ public class MainView extends JFrame {
         JPanel homePanel = createHomePanel();
         EmpresaView adminView = new EmpresaView(empresaService, this);
         DepartamentoView departamentoView = new DepartamentoView(
-                departamentoService,empresaService ,this);
+                departamentoService,
+                empresaService,
+                this
+        );
+        EmpleadosView empleadosView = new EmpleadosView(
+                empleadoService,
+                departamentoService,
+                empresaService,
+                this
+        );
         
         // Establecer la acción de volver al Home
         adminView.setOnHomeAction(() -> cardLayout.show(mainPanel, "Home"));
-        adminView.setVerDepartamentosAction(empresaId -> {
-            departamentoView.setEmpresaId(empresaId);
+        departamentoView.setOnBackAction(() -> cardLayout.show(mainPanel, "Admin"));
+        empleadosView.setOnBackAction(() -> cardLayout.show(mainPanel, "Admin"));
+        // Configurar acción para ver departamentos
+        adminView.addButtonAction("Ver Departamentos", (id, action) -> {
+            departamentoView.setEmpresaId(id);
             cardLayout.show(mainPanel, "Departamentos");
         });
-        departamentoView.setOnBackAction(() -> cardLayout.show(mainPanel, "Admin"));
+        
+        // Configurar acción para ver empleados (si lo necesitas)
+        adminView.addButtonAction("Ver Empleados", (id, action) -> {
+            empleadosView.setEmpresaId(id);
+            cardLayout.show(mainPanel, "Empleados");
+        });
 
         // Añadir paneles al mainPanel
         mainPanel.add(homePanel, "Home");
         mainPanel.add(adminView, "Admin");
         mainPanel.add(departamentoView, "Departamentos");
+        mainPanel.add(empleadosView, "Empleados");
 
         // Añadir mainPanel al frame
         add(mainPanel);

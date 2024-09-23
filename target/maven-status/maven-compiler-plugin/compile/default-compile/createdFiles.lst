@@ -1,14 +1,12 @@
 com\ugm\dbexample\persistence\EmpresaJpaController.class
 com\ugm\dbexample\use_cases\ports\input\IEmpleadoService.class
 com\ugm\dbexample\views\MainView.class
-com\ugm\dbexample\views\EmpresaView$1.class
 com\ugm\dbexample\views\EmpresaView.class
 com\ugm\dbexample\views\DepartamentoView.class
 com\ugm\dbexample\views\MainView$1.class
-com\ugm\dbexample\views\EmpresaView$ButtonEditor.class
-com\ugm\dbexample\views\EmpresaView$ButtonRenderer.class
-com\ugm\dbexample\views\EmpresaView$VerDepartamentosAction.class
+com\ugm\dbexample\DataInitializer.class
 com\ugm\dbexample\use_cases\interactors\EmpleadoServiceImpl.class
+com\ugm\dbexample\views\EmpleadoFormModalView.class
 com\ugm\dbexample\persistence\DepartamentoJpaController.class
 com\ugm\dbexample\DBExample.class
 com\ugm\dbexample\persistence\EmpleadoJpaController.class

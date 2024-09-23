@@ -19,6 +19,10 @@ public class DBExample {
         System.out.println("Hello World!");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("PersistenceUnit");
         
+        boolean shouldInitializeData = true; // O lee esto de una configuración
+        DataInitializer dataInitializer = new DataInitializer(emf, shouldInitializeData);
+        dataInitializer.initializeData();
+        
         EmpresaJpaController empresaRepository = new EmpresaJpaController(emf);
         EmpleadoJpaController empleadoRepository = new EmpleadoJpaController(emf);
         DepartamentoJpaController departamentoRepository = new DepartamentoJpaController(emf);

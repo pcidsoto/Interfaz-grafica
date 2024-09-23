@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ugm.dbexample.persistence;
 
 import com.ugm.dbexample.use_cases.ports.output.IEmpleado;
@@ -19,23 +15,19 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
-/**
- *
- * @author piter
- */
 public class EmpleadoJpaController implements IEmpleado,Serializable {
-
+    private EntityManagerFactory emf = null;
+    
     public EmpleadoJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
     public void create(Empleado empleado) {
-        EntityManager em = null;
+        EntityManager em = getEntityManager();
         try {
             em = getEntityManager();
             em.getTransaction().begin();
@@ -202,17 +194,34 @@ public class EmpleadoJpaController implements IEmpleado,Serializable {
 
     public List<Empleado> getEmpleadosByEmpresaId(Integer id) {
         EntityManager em = getEntityManager();
-    try {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Empleado> cq = cb.createQuery(Empleado.class);
-        Root<Empleado> empleado = cq.from(Empleado.class);
-        // Realizo la query.
-        cq.select(empleado)
-          .where(cb.equal(empleado.get("empresa").get("id"), id));
-        
-        return em.createQuery(cq).getResultList();
-    } finally {
-        em.close();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Empleado> cq = cb.createQuery(Empleado.class);
+            Root<Empleado> empleado = cq.from(Empleado.class);
+            // Realizo la query.
+            cq.select(empleado)
+              .where(cb.equal(empleado.get("empresa").get("id"), id));
+
+            return em.createQuery(cq).getResultList();
+        } finally {
+            em.close();
+        }
     }
+
+    @Override
+    public List<Empleado> getEmpleadosByDepartamentoId(Integer id) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Empleado> cq = cb.createQuery(Empleado.class);
+            Root<Empleado> empleado = cq.from(Empleado.class);
+            // Realizo la query.
+            cq.select(empleado)
+              .where(cb.equal(empleado.get("departamento").get("id"), id));
+
+            return em.createQuery(cq).getResultList();
+        } finally {
+            em.close();
+        }
     }
 }

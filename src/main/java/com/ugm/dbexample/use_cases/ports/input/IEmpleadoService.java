@@ -19,7 +19,7 @@ public interface IEmpleadoService {
     // Métodos específicos de negocio
     List<Empleado> buscarEmpleadosPorNombre(String nombre);
     List<Empleado> buscarEmpleadosPorApellidos(String apellidos);
-    List<Empleado> obtenerEmpleadosPorDepartamento(Departamento departamento);
+    List<Empleado> obtenerEmpleadosPorDepartamento(Integer departamentoId);
     List<Empleado> obtenerEmpleadosPorEmpresaId(Integer id);
  
     // Métodos para manejo de fechas

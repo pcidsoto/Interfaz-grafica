@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ugm.dbexample.views;
 
 import com.ugm.dbexample.entities.Empresa;
@@ -10,6 +6,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import com.ugm.dbexample.use_cases.ports.input.IEmpresaService;
+import com.ugm.dbexample.utilities.TableButtonUtils;
+import com.ugm.dbexample.utilities.TableButtonUtils.TableButtonAction;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.table.TableCellRenderer;
 
 public class EmpresaView extends JPanel {
@@ -19,7 +19,7 @@ public class EmpresaView extends JPanel {
     private JTextField txtId, txtNombre;
     private JLabel lblId; 
     private Runnable onHomeAction;
-    private VerDepartamentosAction verDepartamentosAction;
+    private Map<String, TableButtonAction> buttonActions;
 
     public EmpresaView(IEmpresaService empresaService, MainView aThis) {
         this.empresaService = empresaService;
@@ -48,17 +48,17 @@ public class EmpresaView extends JPanel {
         panelBotones.add(btnHome);
 
         // Tabla de empresas
-        String[] columnas = {"ID", "Nombre", "Ver Departamentos"};
-        modeloTabla = new DefaultTableModel(columnas, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 2; // Solo la columna de "Ver Departamentos" es editable
-            }
-        };
+        String[] columnas = {"ID", "Nombre", "Departamentos", "Empleados"};
+        modeloTabla = new DefaultTableModel(columnas, 0);
         tablaEmpresas = new JTable(modeloTabla);
-        tablaEmpresas.getColumn("Ver Departamentos").setCellRenderer(new ButtonRenderer());
-        tablaEmpresas.getColumn("Ver Departamentos").setCellEditor(new ButtonEditor(new JCheckBox()));
+
+        tablaEmpresas = new JTable(modeloTabla);
         JScrollPane scrollPane = new JScrollPane(tablaEmpresas);
+        
+        buttonActions = new HashMap<>();
+        // Configurar renderer y editor para las columnas de botones
+        configurarColumnaBotones("Departamentos", 2);
+        configurarColumnaBotones("Empleados", 3);
 
         // Agregar componentes al panel
         add(panelFormulario, BorderLayout.NORTH);
@@ -93,67 +93,12 @@ public class EmpresaView extends JPanel {
              modeloTabla.addRow(new Object[]{
                 empresa.getId(),
                 empresa.getNombre(),
-                "Ver Departamentos"
+                "Ver Departamentos",
+                "Ver Empleados"
             });
         }
     }
     
-    // Interfaz funcional para manejar la acción de ver departamentos
-    public interface VerDepartamentosAction {
-        void verDepartamentos(Integer empresaId);
-    }
-    
-    // Renderer para el botón en la tabla
-    class ButtonRenderer extends JButton implements TableCellRenderer {
-        public ButtonRenderer() {
-            setOpaque(true);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-            setText((value == null) ? "" : value.toString());
-            return this;
-        }
-    }
-    
-     // Editor para el botón en la tabla
-    class ButtonEditor extends DefaultCellEditor {
-        protected JButton button;
-        private String label;
-        private boolean isPushed;
-
-        public ButtonEditor(JCheckBox checkBox) {
-            super(checkBox);
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
-        }
-
-        public Component getTableCellEditorComponent(JTable table, Object value,
-                                                     boolean isSelected, int row, int column) {
-            label = (value == null) ? "" : value.toString();
-            button.setText(label);
-            isPushed = true;
-            return button;
-        }
-
-        public Object getCellEditorValue() {
-            if (isPushed && verDepartamentosAction != null) {
-                int row = tablaEmpresas.getSelectedRow();
-                int empresaId = (int) tablaEmpresas.getValueAt(row, 0);
-                verDepartamentosAction.verDepartamentos(empresaId);
-            }
-            isPushed = false;
-            return label;
-        }
-
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-    }
-
     private void agregarEmpresa() {
         String nombre = txtNombre.getText();
         if (!nombre.isEmpty()) {
@@ -225,8 +170,20 @@ public class EmpresaView extends JPanel {
         this.onHomeAction = action;
     }
     
-    // Setter para la acción de ver departamentos
-    public void setVerDepartamentosAction(VerDepartamentosAction action) {
-        this.verDepartamentosAction = action;
+    private void configurarColumnaBotones(String columnName, int columnIndex) {
+        tablaEmpresas.getColumn(columnName).setCellRenderer(new TableButtonUtils.GenericButtonRenderer());
+        tablaEmpresas.getColumn(columnName).setCellEditor(
+            new TableButtonUtils.GenericButtonEditor((id, action) -> {
+                TableButtonAction buttonAction = buttonActions.get(action);
+                if (buttonAction != null) {
+                    buttonAction.execute(id, action);
+                }
+            })
+        );
+    }
+
+    // Método para agregar acciones de botón
+    public void addButtonAction(String actionName, TableButtonAction action) {
+        buttonActions.put(actionName, action);
     }
 }

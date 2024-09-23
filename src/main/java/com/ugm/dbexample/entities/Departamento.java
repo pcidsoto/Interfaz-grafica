@@ -20,10 +20,10 @@ public class Departamento implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", length = 30)
+    @Column(name = "nombre", length = 100)
     private String nombre;
 
-    @Column(name = "descripcion", length = 30)
+    @Column(name = "descripcion", length = 255)
     private String descripcion;
 
     @Column(name = "hora_inicio")
@@ -106,6 +106,11 @@ public class Departamento implements Serializable {
 
     public void setEmpleados(List<Empleado> empleados) {
         this.empleados = empleados;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
     }
     
     
