@@ -1,8 +1,6 @@
 package com.ugm.dbexample.use_cases.ports.output;
 
-import com.ugm.dbexample.entities.Departamento;
 import com.ugm.dbexample.entities.Empleado;
-import com.ugm.dbexample.entities.Empresa;
 import com.ugm.dbexample.exceptions.NonexistentEntityException;
 import java.util.List;
 
@@ -13,5 +11,6 @@ public interface IEmpleado {
     void destroy(Long id) throws NonexistentEntityException;
     List<Empleado> findEmpleadoEntities();
     List<Empleado> findEmpleadoEntities(int maxResults, int firstResult);
-    int getEmpleadoCount(); 
+    int getEmpleadoCount();
+    List<Empleado> getEmpleadosByEmpresaId(Integer id);
 }

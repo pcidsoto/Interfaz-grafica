@@ -16,7 +16,7 @@ import com.ugm.dbexample.entities.Empresa;
 import com.ugm.dbexample.exceptions.NonexistentEntityException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import java.time.LocalDate;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
@@ -198,5 +198,21 @@ public class EmpleadoJpaController implements IEmpleado,Serializable {
         } finally {
             em.close();
         }
+    }
+
+    public List<Empleado> getEmpleadosByEmpresaId(Integer id) {
+        EntityManager em = getEntityManager();
+    try {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Empleado> cq = cb.createQuery(Empleado.class);
+        Root<Empleado> empleado = cq.from(Empleado.class);
+        // Realizo la query.
+        cq.select(empleado)
+          .where(cb.equal(empleado.get("empresa").get("id"), id));
+        
+        return em.createQuery(cq).getResultList();
+    } finally {
+        em.close();
+    }
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import com.ugm.dbexample.use_cases.ports.input.IEmpresaService;
 import javax.swing.table.TableCellRenderer;
 
-public class AdminView extends JPanel {
+public class EmpresaView extends JPanel {
     private final IEmpresaService empresaService;
     private JTable tablaEmpresas;
     private DefaultTableModel modeloTabla;
@@ -21,7 +21,7 @@ public class AdminView extends JPanel {
     private Runnable onHomeAction;
     private VerDepartamentosAction verDepartamentosAction;
 
-    public AdminView(IEmpresaService empresaService, MainView aThis) {
+    public EmpresaView(IEmpresaService empresaService, MainView aThis) {
         this.empresaService = empresaService;
         setLayout(new BorderLayout());
 
@@ -100,7 +100,7 @@ public class AdminView extends JPanel {
     
     // Interfaz funcional para manejar la acción de ver departamentos
     public interface VerDepartamentosAction {
-        void verDepartamentos(Long empresaId);
+        void verDepartamentos(Integer empresaId);
     }
     
     // Renderer para el botón en la tabla
@@ -142,7 +142,7 @@ public class AdminView extends JPanel {
             if (isPushed && verDepartamentosAction != null) {
                 int row = tablaEmpresas.getSelectedRow();
                 int empresaId = (int) tablaEmpresas.getValueAt(row, 0);
-                verDepartamentosAction.verDepartamentos(Long.valueOf(empresaId));
+                verDepartamentosAction.verDepartamentos(empresaId);
             }
             isPushed = false;
             return label;

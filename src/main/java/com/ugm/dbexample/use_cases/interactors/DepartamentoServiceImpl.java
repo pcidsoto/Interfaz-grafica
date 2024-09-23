@@ -50,7 +50,7 @@ public class DepartamentoServiceImpl implements IDepartamentoService {
     }
 
     @Override
-    public List<Departamento> obtenerDepartamentosPorEmpresaId(Long empresaId) {
+    public List<Departamento> obtenerDepartamentosPorEmpresaId(Integer empresaId) {
         try {
             List<Departamento> departamentos = departamentoRepository.getDepartamentosByEmpresaID(empresaId);
             if (departamentos.isEmpty()) {

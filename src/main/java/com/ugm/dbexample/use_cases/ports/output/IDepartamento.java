@@ -13,5 +13,5 @@ public interface IDepartamento {
     List<Departamento> findDepartamentoEntities();
     List<Departamento> findDepartamentoEntities(int maxResults, int firstResult);
     int getDepartamentoCount();
-    List<Departamento> getDepartamentosByEmpresaID(Long id);
+    List<Departamento> getDepartamentosByEmpresaID(Integer id);
 }

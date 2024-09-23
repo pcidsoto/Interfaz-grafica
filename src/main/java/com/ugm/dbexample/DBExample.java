@@ -2,8 +2,10 @@ package com.ugm.dbexample;
 
 import com.ugm.dbexample.persistence.*;
 import com.ugm.dbexample.use_cases.interactors.DepartamentoServiceImpl;
+import com.ugm.dbexample.use_cases.interactors.EmpleadoServiceImpl;
 import com.ugm.dbexample.use_cases.interactors.EmpresaServiceImpl;
 import com.ugm.dbexample.use_cases.ports.input.IDepartamentoService;
+import com.ugm.dbexample.use_cases.ports.input.IEmpleadoService;
 import com.ugm.dbexample.views.MainView;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -24,9 +26,15 @@ public class DBExample {
         // Instancias de servcios.
         IEmpresaService empresaService = new EmpresaServiceImpl(empresaRepository);
         IDepartamentoService departamentoService = new DepartamentoServiceImpl(departamentoRepository);
+        IEmpleadoService empleadoService = new EmpleadoServiceImpl(empleadoRepository);
         
         SwingUtilities.invokeLater(() -> {
-            MainView mainView = new MainView(empresaService, departamentoService);
+            MainView mainView = new MainView(
+                    empresaService, 
+                    departamentoService,
+                    empleadoService,
+                    emf
+            );
             mainView.setVisible(true);
         });
     }

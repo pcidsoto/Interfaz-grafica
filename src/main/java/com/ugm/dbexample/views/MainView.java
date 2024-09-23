@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ugm.dbexample.views;
 
 // Vista Principal
 
 import com.ugm.dbexample.use_cases.ports.input.IDepartamentoService;
+import com.ugm.dbexample.use_cases.ports.input.IEmpleadoService;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import javax.swing.JButton;
@@ -15,17 +12,30 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import com.ugm.dbexample.use_cases.ports.input.IEmpresaService;
+import jakarta.persistence.EntityManagerFactory;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MainView extends JFrame {
+    private EntityManagerFactory emf;
+    
     private IEmpresaService empresaService;
     private IDepartamentoService departamentoService;
+    private IEmpleadoService empleadoService;
     
     private CardLayout cardLayout;
     private JPanel mainPanel;
 
-    public MainView(IEmpresaService empresaService, IDepartamentoService departamentoService) {
+    public MainView(
+            IEmpresaService empresaService, 
+            IDepartamentoService departamentoService,
+            IEmpleadoService empleadoService,
+            EntityManagerFactory emf
+            ) {
         this.empresaService = empresaService;
         this.departamentoService = departamentoService;
+        this.empleadoService = empleadoService;
+        this.emf = emf;
 
         setTitle("Aplicación de Gestión de Empresas");
         setSize(800, 600);
@@ -37,8 +47,9 @@ public class MainView extends JFrame {
 
         // Crear paneles
         JPanel homePanel = createHomePanel();
-        AdminView adminView = new AdminView(empresaService, this);
-        DepartamentoView departamentoView = new DepartamentoView(departamentoService, this);
+        EmpresaView adminView = new EmpresaView(empresaService, this);
+        DepartamentoView departamentoView = new DepartamentoView(
+                departamentoService,empresaService ,this);
         
         // Establecer la acción de volver al Home
         adminView.setOnHomeAction(() -> cardLayout.show(mainPanel, "Home"));
@@ -55,6 +66,14 @@ public class MainView extends JFrame {
 
         // Añadir mainPanel al frame
         add(mainPanel);
+        
+         // Agregar un listener para el cierre de la ventana
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
     }
 
     private JPanel createHomePanel() {
@@ -70,5 +89,15 @@ public class MainView extends JFrame {
 
     public void showHome() {
         cardLayout.show(mainPanel, "Home");
+    }
+    
+    @Override
+    public void dispose() {
+        System.out.println("Cerrando conexión a DB");
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+            System.out.println("EntityManagerFactory cerrado.");
+        }
+        super.dispose();
     }
 }

@@ -83,55 +83,37 @@ public class DepartamentoJpaController implements  IDepartamento,Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+
+            // Buscar el departamento existente
             Departamento persistentDepartamento = em.find(Departamento.class, departamento.getId());
-            Empresa empresaOld = persistentDepartamento.getEmpresa();
-            Empresa empresaNew = departamento.getEmpresa();
-            List<Empleado> empleadosOld = persistentDepartamento.getEmpleados();
-            List<Empleado> empleadosNew = departamento.getEmpleados();
-            if (empresaNew != null) {
-                empresaNew = em.getReference(empresaNew.getClass(), empresaNew.getId());
-                departamento.setEmpresa(empresaNew);
+            if (persistentDepartamento == null) {
+                throw new NonexistentEntityException("El departamento con id " + departamento.getId() + " ya no existe.");
             }
-            List<Empleado> attachedEmpleadosNew = new ArrayList<Empleado>();
-            for (Empleado empleadosNewEmpleadoToAttach : empleadosNew) {
-                empleadosNewEmpleadoToAttach = em.getReference(empleadosNewEmpleadoToAttach.getClass(), empleadosNewEmpleadoToAttach.getId());
-                attachedEmpleadosNew.add(empleadosNewEmpleadoToAttach);
-            }
-            empleadosNew = attachedEmpleadosNew;
-            departamento.setEmpleados(empleadosNew);
-            departamento = em.merge(departamento);
-            if (empresaOld != null && !empresaOld.equals(empresaNew)) {
-                empresaOld.getDepartamentos().remove(departamento);
-                empresaOld = em.merge(empresaOld);
-            }
-            if (empresaNew != null && !empresaNew.equals(empresaOld)) {
-                empresaNew.getDepartamentos().add(departamento);
-                empresaNew = em.merge(empresaNew);
-            }
-            for (Empleado empleadosOldEmpleado : empleadosOld) {
-                if (!empleadosNew.contains(empleadosOldEmpleado)) {
-                    empleadosOldEmpleado.setDepartamento(null);
-                    empleadosOldEmpleado = em.merge(empleadosOldEmpleado);
+
+            // Actualizar solo los atributos del departamento
+            persistentDepartamento.setNombre(departamento.getNombre());
+            persistentDepartamento.setDescripcion(departamento.getDescripcion());
+
+            // Actualizar la referencia a la empresa si ha cambiado
+            if (departamento.getEmpresa() != null) {
+                if (persistentDepartamento.getEmpresa() == null ||
+                    departamento.getEmpresa().getId() != persistentDepartamento.getEmpresa().getId()) {
+                    Empresa empresaNew = em.getReference(Empresa.class, departamento.getEmpresa().getId());
+                    persistentDepartamento.setEmpresa(empresaNew);
                 }
+            } else {
+                persistentDepartamento.setEmpresa(null);
             }
-            for (Empleado empleadosNewEmpleado : empleadosNew) {
-                if (!empleadosOld.contains(empleadosNewEmpleado)) {
-                    Departamento oldDepartamentoOfEmpleadosNewEmpleado = empleadosNewEmpleado.getDepartamento();
-                    empleadosNewEmpleado.setDepartamento(departamento);
-                    empleadosNewEmpleado = em.merge(empleadosNewEmpleado);
-                    if (oldDepartamentoOfEmpleadosNewEmpleado != null && !oldDepartamentoOfEmpleadosNewEmpleado.equals(departamento)) {
-                        oldDepartamentoOfEmpleadosNewEmpleado.getEmpleados().remove(empleadosNewEmpleado);
-                        oldDepartamentoOfEmpleadosNewEmpleado = em.merge(oldDepartamentoOfEmpleadosNewEmpleado);
-                    }
-                }
-            }
+
+            // Realizar la actualización
+            em.merge(persistentDepartamento);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Long id = departamento.getId();
                 if (findDepartamento(id) == null) {
-                    throw new NonexistentEntityException("The departamento with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("El departamento con id " + id + " ya no existe.");
                 }
             }
             throw ex;
@@ -225,7 +207,7 @@ public class DepartamentoJpaController implements  IDepartamento,Serializable {
     }
 
     @Override
-    public List<Departamento> getDepartamentosByEmpresaID(Long empresaId) {
+    public List<Departamento> getDepartamentosByEmpresaID(Integer empresaId) {
         EntityManager em = getEntityManager();
         try {
             em = getEntityManager();
