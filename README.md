@@ -52,6 +52,29 @@ El archivo WAR se generará en el directorio `target/`.
 - El proyecto está configurado para utilizar la codificación UTF-8.
 - Se ha configurado el `maven-war-plugin` para generar un archivo WAR sin necesidad de un archivo `web.xml`.
 
+### Arquitectura del proyecto.
+
+¿Qué es arquitectura limpia? [Link](https://semihtekin.medium.com/what-is-the-clean-architecture-c80c2a2ff69a)
+
+![plot](./docs/arquitectura_limpia.webp)
+
+Se implementa arquitectura limpia a modo de ejemplo.
+
+![plot](./docs/Diagrama_clean_architecture.png)
+
+Se usan puertos para comunicar las diferentes capas:
+
+- Input para comunicar las vistas, y casos de uso.
+- Output para comunicar la capa de persistencia con los casos de uso.
+
+Cross al proyecto hay utilidades y excepciones para mejorar la detección de errores.
+
+El uso de JPA e Hibernate nos permite abstraernos de la implementación de la base de datos al usar dicho ORM.
+
+¿Qué es JPA? [Link](https://www.tutorialspoint.com/es/jpa/jpa_orm_components.htm)
+
+¿Qué es hibernate? [Link](https://hibernate.org/orm/)
+
 ## Contribuir
 Si deseas contribuir al proyecto, por favor:
 1. Haz un fork del repositorio
